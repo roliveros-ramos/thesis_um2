@@ -1,0 +1,110 @@
+Evolutionary algorithms (EA) are computer programs designed for the automatic solving of complex problems such as minimization of functions, and are inspired by the process of Darwinian evolution (Jones 1998). The three main types of EA are Genetic Algorithms (GA), Evolutionary Programming (EP) and Evolutionary Strategies (ES). Historically, Evolutionary Programming and especially Genetic Algorithms were designed with a broader range of applications (B\"ack and Schewefel, 1993) while Evolutionary Strategies (ESs) were specifically designed for parameter optimization problems (Jones, 1998). 
+For optimization problems, EAs work over a population of ``individuals'' searching over the space of solutions. Each individual encodes a solution (e.g. a vector of parameter values for a model) to the problem which performance can be assessed. 
+EAs rely on three main processes: selection, recombination and mutation. The selection process is intended to select the individuals which will produce offspring (i.e the population for the next generation). The recombination process allows inbreeding the selected individuals (parents) in an attempt to enhance their performance. Finally, the mutation process produces random variability in the population, normally by modifying the solution encoded by the parents. 
+
+The next sections describe the material presented in the Supplementary material 1 of the manuscript presented in section \ref{paper2}
+
+\subsection{Evolutionary strategies}
+
+In ESs, selection and recombination are deterministic parametric processes. Additionally, EAs include some ?meta-parameters? controlling the behavior of the algorithm itself (e.g. the mutation rates). ESs also include ``self-adaptation'' procedures allowing to make the meta-parameters of the algorithm vary to improve their performance over the evolutionary process. ESs focus on mutation as the main search operator, and it has been pointed out that it is necessary to use recombination in connection to self-adaptation to improve the performance of the algorithm (Thomas and Schewefel, 1993). A comprehensive synthesis of Evolutionary Strategies can be found in Beyer and Schwefel (2002). 
+
+We consider a population $\{x_i\}$, with $x_i \in \RR^n$, for $i=1, \dots,  \lambda$ and $n$ the dimension of the problem (i.e the number of parameters to estimate). We also need to define an objective function $f$ (so called fitness function) to be minimized. So, for each $x_i$ we can calculate $f(x_i)$ and we can sort the individuals of the population by their fitness values:
+\begin{equation}
+f(x_{1:\lambda}) \leq f(x_{2:\lambda}) \leq \dots \leq f(x_{\lambda:\lambda})
+\label{eq-sort}
+\end{equation}
+Where $x_{i:\lambda}$ encodes the $i$-th lower value for the function $f$ among the population. This allows us to carry on the selection of the best $\mu < \lambda$ individuals of the population, which will constitute the parents for the next generation. 
+
+The recombination of the parents can follow different rules. It can be as simple as taking the mean (or weighted mean) of the $\mu$ selected parents. Finally, the mutation process is used to produce a new generation, for example by sampling the new $x_i$ from a multivariate normal distribution:
+
+$$x_i \sim N(m, C)$$
+
+\noindent where $m$ is an $n$-dimensional vector resulting from the recombination of the parents and $C$ is a covariance matrix. During the course of the evolutionary process, $m$ will converge to an optimal solution. 
+
+In the algorithm developed in this work, we introduce a new method for an adaptative hierarchical recombination (AHR), optimized for parameter estimation of models using several sources of information (i.e calibration using several sources of data). 
+% define self adaptation
+Additionally, in order to improve the convergence and search capabilities, we implement self-adaptation procedures  to improve the adaptation of the covariance matrix $C$ during the optimization. 
+
+In order to introduce a self-adaptation process in our algorithm, we assume $C$ is a diagonal matrix, while extending the results to a generic covariance matrix is a work under progress. In the next section, the algorithm developed is described in detail.
+
+\subsection{The AHR-ES Algorithm}
+
+\subsubsection{Objective function}
+
+We are considering a general class of objective functions $f$:
+
+\begin{equation}
+f(x) = f_0(x) + \sum_{k=1}^K f_k(x),
+\end{equation}
+
+\noindent where $x \in \RR^n$ is a parameter vector and $f_k$, $k=0,\ldots, K$ are the \emph{partial fitnesses}. The objective of the calibration is to optimize $f(x)$, the search being directed by the recombination between individuals with ``local'' success (optimizing $f_k$, $k=1,\ldots, K$). 
+
+It is important to notice that we are not sorting the parents according to the partial fitness for the $f_0$ component, but this component contributes to the total fitness and the initial selection.
+In particular, $f_k$ could be the likelihood function associated to each calibration variable. By using likelihood functions, it is straightforward to build fitness functions to calibrate variables with data time series. Also, this choice makes a handful of statistical procedures available to test the goodness of fit, to estimate confidence intervals, etc. On the other hand, likelihood fitness functions could be very complex and highly multimodal, especially when handling a model with non-linear relationships and stochasticity. Optimizing likelihood functions for complex models could be prone to premature stagnation and requires more generations to find optimal solutions, reason why it is important to reduce population sizes (to reduce computing time) and to use properly defined self-adapted mutation rates (to increase rate of convergence).
+
+\subsection{Selection}
+
+We select the $\mu<\lambda$ parents $\xpar_i$ ($i=1, \dots, \mu$) which have the lowest value of the objective function $f$.
+ Then, for each partial fitness $f_i$ ($i=1, \dots, K$) we will sort the parents as in Equation~\eqref{eq-sort}:
+ 
+\begin{equation}
+f_k(\xpar_{1:\mu,k}) \leq f_k(\xpar_{2:\mu,k}) \leq \dots \leq f_k(\xpar_{\mu:\mu,k})
+\label{eq-sort2}
+\end{equation}
+
+\noindent for each $m=1, \dots, K$ partial fitness.
+
+\subsection{Recombination}
+
+As a first step, we will recombine the parents according to their success at optimizing each partial fitness $f_k$, given a set of weights $w_i$ ($i=1, \dots, \mu$):
+
+\begin{eqnarray}
+\xmean& = & \textstyle \sum_iw_i \xpar_{i:\mu, m}\\ 
+\smean^2 & = & \textstyle \sum_iw_i\xpar_{i:\mu, m}^2 - \xmean^2
+\end{eqnarray}
+
+\noindent such that $w_i \geq w_j$ for $i<j$ and $\sum_iw_i =1$. Note that $\xmean^2$ is taken entry--wise, i.e. squaring each component of $\xmean$ independently (Hadamard product). This initial recombination allows to better use the information in all selected individuals, and particulary to reduce the impact of selecting an individual with a good fitness value just by chance, especially when dealing with stochastic models. As part of the recombination we also calculate $\smean$ which provides information about the variability of each parameter value among the parents.
+
+Then, we exploit all the historical information on $\xmean$ and $\smean$ by exponentially weighting the past of the recombined parents:
+\begin{eqnarray}
+\xdyn(g) & = & \left(1-\alpha\right)\xdyn(g-1) + \alpha\xmean\\
+\sdyn^2 (g) & = & \left(1-\alpha\right)\left(\xdyn^2(g-1) + \sdyn^2(g-1)\right) + \alpha\left(\smean^2 + \xmean^2\right) - \xdyn^2(g) 
+\end{eqnarray}
+\noindent for each $m=1, \dots, K$ partial fitness, and generation $g$. Here, $\xdyn(g)$ and $\sdyn(g)$ are calculated as moving average and variance for generation $g$, to take into account past information with exponentially decreasing weights given by $\alpha \in [0,1]$, a meta-parameter of the algorithm, which controls the rate at which the algorithm learns from the current parents. Particularly, $\sdyn$ provides information on how important a particular parameter is for the minimization of the objective function, since the more important the parameter the smaller the variability that we would expect across the generations.
+Now, let's define $\smin=\min_n\sdyn$ and $\smax=\max_n\sdyn$, the minimum and maximum over the $n$ entries of $\sdyn$, respectively to calculate:
+
+\begin{equation}
+\hat{w}_k = \left[\frac{\smax-\sdyn}{\smax-\smin}\right]^\beta
+\end{equation} 
+
+\begin{equation}
+w_k =\frac{\hat{w}_k}{\|\hat{w}_k\|_1} 
+\end{equation} 
+
+
+\noindent for $\beta \geq 1 $, and $\|\hat{w}_k\|_1$ is the $L_1$ norm of $\hat{w}_k$, taken to make the sum of $w_k$ equal to 1. Again, the quotient and the power are taken entry--wise . $w_k$ ponderates the relative importance of each parameter to the partial fitness $m$. When parameters are bounded, the vector $\sdyn$ can be divided by the ranges of each parameter before the recombination stage for rescaling purposes.
+
+Finally, we recombine all parents to produce the \emph{parental genotype} $\xfinal$ by using the weights given by $w_k$ and the first recombined parents given by $\xdyn$:
+
+\begin{equation}
+\xfinal[i] = \frac{\sum_{m=1}^M w_k[i]\xdyn[i]}{\sum_{m=1}^M w_k[i]},
+\label{eq-final_recombination}
+\end{equation}
+
+\noindent where $i=1, \dots, n$ represents the position of a particular parameter in the vectors.
+
+This final recombination uses dynamically changing weights which take into account the variability of each parameter independently and its importance to minimize every partial component of the objective function.  
+
+\subsection{Mutation}
+
+The new individuals of the population in generation $g+1$ will be produced by mutating the parental genotype $\xfinal$ using a multivariate normal distribution:
+
+\begin{equation}
+x_i^{(g+1)} \sim N(\xfinal^{(g)}, \step^{(g)}C^{(g)})
+\end{equation}
+
+\noindent for $i=1, \dots, \lambda$. The matrix $C^{(g)}$ is constructed following the self-adaptation algorithm techniques (Covariance Matrix Adaptation CMA-ES; Hansen and Ostermeier 2001) and $\step$ is the step size control calculated as in  
+Hansen and Ostermeier (2001). The reader can read the source code for details on this particular implementation.
+
+Additionally, when the parameters are bounded, a truncated multivariate normal distribution is used for the mutation process instead of a multivariate normal distribution. 
+

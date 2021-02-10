@@ -1,0 +1,101 @@
+% !TeX root = osmose.tex
+% !TeX spellcheck = en_GB
+% !TeX encoding = ISO-8859-1
+\documentclass[10pt,a4paper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{fullpage}
+
+\begin{document}
+
+
+In OSMOSE, the basic unit of simulation is the ``school'', a group of individuals of the same species sharing the same properties and history in terms of spatial position, length and age. The state of each school in the system can be described by a vector $S = (s, x, y, N, L, A)$, where $s$ is the species the school belongs to, $(x,y)$ is the position of the school (longitude, latitude), $N$ is the number of individuals in the school (abundance), $L$ is the body length of the individuals and $A$ is its age. At any time, the state of the system can be described by the state of all living schools  ($N>0$).
+There are three main processes controlling the dynamic of a school: mortality, somatic growth and spatial movement. The core of the first two first processes relies in very simple survival and growth assumptions:
+
+\begin{eqnarray}
+N(t+1) & = & e^{-Z}N(t)\\
+L(t+1) & = & L(t) + G
+\end{eqnarray}
+
+
+In OSMOSE, the total mortality ($Z$) and growth in length ($G$) during a time step are functions of the state of the school itself and that of all other schools, regardless of the species, in a defined neighborhood (square) given by the discretization of the spatial domain. This means growth and mortality are function of the state of all schools which are present in the same cell of the grid at the same time. In the OSMOSE version considered in this work, the functions defining mortality and growth are deterministic, while the main source of stochasticity is in the movement process. 
+
+After one time step, each school can move to an adjacent cell of the grid or remain in the same position in a uniform random way. Additionally, the model is forced by species-specific spatial distribution maps. At any time, each school can be assigned to a unique map, while this map can change during the simulation according to an age or time-specific criteria (e.g. seasonal maps, different maps for adults or juveniles). When a change in the map for a school occurs, the school is relocated randomly in the new map according to its spatial probability distribution (which can be uniform in the simplest case).
+
+Taken this into account, growth and mortality in OSMOSE depends stochastically on the complex interactions between several schools of different species.
+Mortality and growth both depend on the predation process which is length based in OSMOSE. For each species, a school can feed on prey within a limited range of sizes, parameterized by the minimum and maximum ratio between predator and prey sizes. This rule allows each school to ``select'' which other schools it can feed on, considering only the length of the individuals and the co--occurrence in the same cell, so that for most modeled species in the pelagic column, no a priori species-specific trophic relationship is assumed. As a result, the diets, trophic levels and predation mortalities are derived quantities from the model and the size-based predation assumption, and produced as outputs of OSMOSE.
+ 
+A key parameter linking predation with growth and mortality is the critical predation efficiency threshold $\xi_{max}$, defined as the threshold corresponding to maintenance needs of a fish, and beyond which the food ration can be dedicated to fish growth (Shin and Cury 2001, Shin et al. 2004). This parameter allows correcting the actual growth (no growth below $\xi_{max}$) in the mean length of the school, and adding a starvation mortality $M_\xi$ to the total mortality when predation efficiency is below $\xi_{max}$ (Shin and Cury 2001). 
+
+The total mortality for a school is calculated taking into account the food ration needed by co--occurring predator schools (predation mortality), the fishing mortality, the starvation mortality and an additional mortality component $M_0$ representing the mortality due to other processes which are not fully explicit in the model (e.g. due to other predators). The total mortality and its components for each school in the same cell of the grid are solved simultaneously for all species. 
+
+The size of the fish is modeled by a linear relationship below a critical age or length (fast growth at initial stages, and for which von Bertalanffy growth parameters are usually not well estimated), and beyond that age/size threshold is modeled using the von Bertalanffy model. The actual growth rate (difference in size between two time steps) is calculated on the basis of the von Bertalanffy growth model but taking into account a deviation depending on the predation efficiency at each time step, according to Shin and Cury (2001).
+
+An additional important process leading to the renewal of the population is the reproduction process. Here, the total spawner biomass of each species (aggregated over all schools given a size or age of maturity and sex ratio) leads to an egg production (age 0 abundance). While the recruitment level emerges from the different sources of mortality applied at the subsequent time steps, the initial total egg production is assumed proportional to the spawner biomass, the potential relative fecundity (number of egg per gram of mature female by unit of time) being the factor of proportionality. These eggs are distributed in a number of new schools proportional to the area of distribution of the species and the expected average biomass of the population for the modeled period. This means that for species with bigger distribution areas, abundance, or both, more new age-0 schools are introduced in the model at each time step. The initial state of the new schools is given by: (i) abundance: the number of eggs after the distribution of the total egg production among all the new schools, (ii) length: the assumed size of the egg for the species, (iii) position: randomly distributed within the age-0 map for the species, and (iv) age 0.
+
+The dynamics of the low trophic level (LTL) species is not explicit in the model, reason why plankton fields (provided by observations or biogeochemical models) are used as forcing variables, representing additional food for the smaller species or size classes in OSMOSE. The LTL biomass is available to predation in the same way school biomass is in OSMOSE.
+     
+The constants, state variables, parameters, forcings, initial conditions and main derived quantities used in the OSMOSE model are described in Table 1.
+
+\begin{table}
+\caption{Description of main quantities used in the OSMOSE model.}
+\centering \small
+\begin{tabular}{|l|c|c|p{4cm}|}
+\hline & Symbol & Units & Remarks\\
+\hline \multicolumn{4}{|l|}{1. Constants}\\
+\hline Number of low trophic level groups & $N_P$ & &	Species or functional groups from LTL model.\\
+\hline Number of species modeled & $N_S$ & & Species or functional groups modeled in OSMOSE.\\
+\hline Number of age-0 schools & $n^s$ & year$^{-1}$ & Number of new schools per year for species $s$.\\
+\hline Number of simulation steps per year	& $N$ &	year$^{-1}$ & \\
+\hline Number of simulation years & $T$ & year &  \\
+\hline \multicolumn{4}{|l|}{2. State variables}\\	
+\hline Number of schools alive & $n^{\#}$ & & Schools with positive abundance. \\
+\hline Species	& $S$ & & $s = 1, \ldots , N_S$\\
+\hline Spatial position & 	$(x,y)$ & degrees & Position in latitude and longitude.\\
+\hline Abundance of the school & $N$ & ind & Number of individuals \\
+\hline Average length of individuals of a school & $L$ & cm & \\	
+\hline Age of individuals of a school & $A$ & year & \\	
+\hline State of a school & $S$ & & $S = (s, x, y, N, L, A)$ \\
+\hline \multicolumn{4}{|l|}{3. Forcing variables}\\ 
+\hline Biomass of plankton from LTL & $B_p(t,x,y)$	& tonnes/km$^2$ & $p = 1, \ldots, N_P$\\
+\hline Probability of presence in the habitat & $P_s(t,x,y,a)$ & &	$s = 1, \ldots, N_S$\\
+\hline \multicolumn{4}{|l|}{4. Parameters}\\
+\hline Critical predation efficiency & $\xi_{max}$ & & \\		
+\hline Maximum starvation mortality & $M_{\xi,max}^s$ & year$^{-1}$ & \\	
+\hline Life history parameters	& $\Phi_s$ & & $\Phi_s =~(A_{max}, k, L_{\infty}, t_0, A_{thr}, \newline a, b, l_{egg}, w_{egg}, p_f, L_{50})$, \newline vB equation, length--weight\\
+\hline Predation size ratios & $\rho_{s,min}(a,l)$ & & $s = 1, \ldots, N_S$\\
+& $\rho_{s,max}(a,l)$ & & \\
+\hline Base natural mortality & $M_s(t,x,y,a,l)$ & year$^{-1}$ & \\	
+\hline Fishing mortality &	$F(s,t,x,y,a,l)$ & year$^{-1}$ & \\	
+\hline Plankton accessibilities & $\alpha_{p,s}(t)$ & & Fraction of plankton group $p$ accessible to predators species $s$ \\
+\hline Predation accessibilities & $\alpha_{s,r}(t)$ & & Fraction of species group $s$ accessible to predators species $r$ \\
+\hline Fecundity & $\varphi^s(t)$ & eggs/tonne/year & \\
+\hline Larval mortality & $\lambda^s(t)$ &  month$^{-1}$ & \\	
+\hline Inmigration biomass flux & $\psi^s(t)$ & tonnes & \\	
+\hline Average length of migratory schools	& $L$ & cm & \\	
+\hline Age of migratory schools & $A$ & years & \\	
+\hline \multicolumn{4}{|l|}{5. Derived quantities}\\
+\hline Spatial distribution of abundance & $N_s(t, x, y)$ & ind/km$^2$ & $s = 1, \ldots, N_S$ \\
+Spatial distribution of biomass & $B_s(t, x, y)$ & tonnes/km$^2$ & \\	
+\hline Total abundance of the population &  $N_s(t)$ & ind & \\
+Total biomass of the population & $B_s(t)$ & tonnes & \\	
+\hline Catch-at-age & $C_s(t, a)$ & ind  & \\
+Catch-at-length & $C_s(t, l)$ & &\\
+\hline Yield & $Y_s(t, x, y)$ & tonnes/km$^2$ & \\	
+\hline Total yield	& $Y_s(t)$ & tonnes & \\	
+\hline Predation mortality & $P_{s,r}(t, x, y)$ & & Prey $s = 1, \ldots, N_S$ \\
+Starvation mortality & $M_\xi(s, t, x, y)$ & year$^{-1}$ & Predator $r = 1, \ldots, N_S$\\
+Total mortality	& $Z(s, t, x, y)$ & & \\ 
+\hline Trophic level & $TL(s,t,x,y,l)$ & & \\		
+\hline \multicolumn{4}{|l|}{6. Initial conditions}\\
+\hline Total biomass & $B_0^s$ & tonnes & \\	
+\hline School states & $S_0^i = (s, x, y, l, a)$ & & $i = 1, \ldots,n_0^\#$.\\
+\hline
+\end{tabular} 
+\end{table}
+
+
+\end{document}

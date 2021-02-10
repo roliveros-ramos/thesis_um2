@@ -1,0 +1,241 @@
+% \usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}       % innecesarios si se usa amsart/amsbook % USO
+% \usepackage{amsfonts}
+\usepackage{amssymb} % USO
+\usepackage{bold-extra}
+% \usepackage{amsthm}
+\usepackage{latexsym}
+\usepackage{emptypage}
+% \usepackage{graphicx} % USO
+% \usepackage{wrapfig}
+% \usepackage{rotating}
+\usepackage[section]{placeins}
+\usepackage[usenames, dvipsnames]{color} % USO
+% \usepackage{colortbl}
+% \usepackage{flafter}
+% % \usepackage{subfigure} % USOD
+\usepackage{fancyhdr}
+\usepackage{pdfpages}
+% \usepackage{natbib}
+% \usepackage[margin=20pt, font=small, labelfont=bf, labelsep=period]{caption}
+% \usepackage{url}             % espaciado adecuado de las URL largas en las referencias
+%\usepackage{path}            % espaciado y guinado adecuado para las rutas de directorios
+% \usepackage[final]{listings} % codigo fuente
+% \usepackage{appendix}        % mejor control sobre los apendices
+% \usepackage{amsmath,amsthm,amstext,amssymb,amsfonts}
+\usepackage{textcomp}   % extra symbols (textopenbullet) % USO
+
+% \usepackage{rotating}
+
+% \usepackage{tabularx}
+% \usepackage{booktabs}
+% 
+\usepackage{etoolbox, tocloft}
+%\patchcmd{\tableofcontents}{\MakeUppercase\contentsname}{\contentsname}{}{}
+\preto\section{%
+  \ifnum\value{section}=0\addtocontents{toc}{\vskip10pt}\fi
+}
+\preto\figure{%
+  \ifnum\value{figure}=0\addtocontents{lof}{{\bfseries Chapter \thechapter\vskip10pt}\par}\fi
+}
+\preto\table{%
+  \ifnum\value{table}=0\addtocontents{lot}{{\bfseries Chapter \thechapter\vskip10pt}\par}\fi
+}
+
+\usepackage[pagebackref=true]{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, filecolor=black, urlcolor=black, linktoc=page,
+	pdftitle={End-to-end modelling approach for an ecosystem approach to fisheries in the Humboldt Current Ecosystem}, 
+	pdfauthor={Ricardo Oliveros--Ramos}, 
+	pdfsubject={PhD Thesis},
+pdfkeywords={Ecosystem modelling, Humboldt Current Ecosystem, OSMOSE}}
+
+\usepackage{cite} % CREO QUE USO
+\usepackage[round]{natbib} % USO
+\usepackage{lscape} % USO
+\usepackage{multirow} % USO
+\usepackage{csquotes}
+% \usepackage{subfig} % USO
+\usepackage{caption}
+\usepackage{subcaption}
+% \renewcommand\thesubfigure{\roman{subfigure}}
+\usepackage{array,graphicx}
+\usepackage{booktabs}
+\usepackage{threeparttable}
+% \usepackage{biblatex}
+% \usepackage[backend=biber,style=authoryear,sortcites,sorting=ynt]{biblatex}
+% \addbibresource{referencesthese.bib}
+\usepackage{appendix}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{lipsum}
+
+\newcommand*\rot{\rotatebox{90}}
+
+
+% \bibliographystyle{authordate_perso.bst}
+%\bibliographystyle{ecology_rocio.bst}
+% \bibliographystyle{te.bst}
+%\graphicspath{{/data/rociocokriging/}{/data/mes_images/}}
+
+%% Maquetacion ------------------------------------------------------------
+   \parskip 0cm
+   \oddsidemargin 2cm
+   \evensidemargin 2cm
+   \topmargin 1cm
+   \textheight 23.5cm
+   \textwidth 15cm
+   \voffset -1.5cm
+   \hoffset -2cm
+   \headheight 1cm
+   \headsep 1cm
+   \topskip 0cm
+   
+% 
+% \setlength{\oddsidemargin}{35mm}
+% \setlength{\evensidemargin}{25mm}
+% \setlength{\voffset}{-0.725in}
+% \setlength{\hoffset}{-1in}
+% \setlength{\textwidth}{150mm}
+% \setlength{\topmargin}{4mm}
+% \setlength{\headheight}{10mm}
+% \setlength{\headsep}{15mm}
+% \setlength{\topskip}{0mm}
+% \setlength{\textheight}{243mm}
+
+% \renewcommand{\baselinestretch}{1.2}           % interlinado un poquito m�s amplio
+\setstretch{1.25}
+
+
+% incluir numero de capitulo en las numeraciones
+\numberwithin{section}{chapter}
+\numberwithin{equation}{chapter}
+\numberwithin{figure}{chapter}
+\numberwithin{table}{chapter}
+
+
+
+% definitions
+\newcommand{\RR}{\mathbb{R}}
+\def\xpar{\tilde{x}}
+\def\xmean{x_k}
+\def\smean{\sigma_k}
+\def\xdyn{\textbf{x}_k}
+\def\sdyn{\textbf{s}_k}
+\def\smax{\textbf{s}^{(\max)}_k}
+\def\smin{\textbf{s}^{(\min)}_k}
+\def\xfinal{\textbf{x}}
+\def\sfinal{\textbf{s}}
+\def\ccov{c_{cov}}
+\def\mucov{\mu_{cov}}
+\def\step{\sigma_{size}}
+
+% % comandos
+% \newcommand{\ve}[1]{\boldsymbol{#1}}                       % vectores
+% \newcommand{\mat}[1]{\boldsymbol{\mathsf{#1}}}          % matrices (roman)
+% \newcommand{\esp}[1] {\mathbb{E}\left[#1\right]}	% esperanza
+% \newcommand{\var}[1] {\mathbb{V}\left[#1\right]}	% varianza
+% \newcommand{\cov}[1] {\mathbb{C}\left[#1\right]}	% funci�n de covarianza
+% \newcommand{\pr}[1] {\mathbb{P}\left[#1\right]}		% Probabilidad
+% \newcommand{\alert}[1]{\noindent\textcolor{BrickRed}{\textbf{(#1)\\}}}
+% \newcommand{\simiid}{\buildrel\rm iid \over\sim}        % ~ iid
+% \newcommand{\R}{\texttt{R}}
+% \newcommand{\inla}{\texttt{INLA}}
+% 
+% \DeclareMathOperator{\logit}{logit}
+\DeclareMathOperator*{\argmax}{arg\,max}
+% 
+% \newcommand{\af}{\alpha}
+% \newcommand{\ta}{\theta}
+% \newcommand{\ld}{\lambda}
+% \newcommand{\M}{I\!\!M}
+% \newcommand{\I}{\mathbb I}
+% \newcommand{\1}{\mathbf{1}}
+% \newcommand{\pp}{\Phi}
+% \newcommand{\N}{\mathbb N}
+% \newcommand{\x}{{\bf x}}
+% \newcommand{\argmax}{\mbox{ argmax}}
+% \renewcommand{\topfraction}{0.85}
+% \renewcommand{\textfraction}{0.1}
+% \newcommand{\dd}{\mathrm{d}}
+% \newcommand{\T}{{\sf{T}}}
+% \newcommand{\vecx}{\mathbf{x}}
+% \newcommand{\vecy}{\mathbf{y}}
+% \newtheorem{definition}{Definition}
+% \newenvironment{example}{\noindent{\bf Example\/} \rm}{\hfill \\}
+% \newenvironment{remark}{\noindent{\bf Remark\/} \rm}{\hfill \\}
+% 
+% \def\mm#1{\ensuremath{\boldsymbol{#1}}} % version: amsmath
+
+%% Comandos necesarios para hacer el glosario
+%\def\glossaryname{Glosario de s\'{\i}mbolos}
+%\makeglossary
+% 
+% % This is done with the titlesec package                                                                            
+%   \titleformat{\chapter}[hang]
+% 	      {\thispagestyle{empty}}
+%               {\normalfont\Large\filcenter} % {fmt}                                                                   
+%               {\thechapter.\ }              % {label}                                                                 
+%               {1pc}                         % {sep}                                                                   
+% %               {\vspace{-1in}\enlargethispage{-0.5in}\thispagestyle{empty}}    % {before}                                  
+% % 
+
+
+
+\pagestyle{fancy}
+
+ \fancyhead{}
+        \fancyfoot{}
+        \fancyhead[LO]{\rightmark}
+        \fancyhead[RE]{\leftmark}
+        \fancyhead[LE,RO]{\thepage}
+        \renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+        \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+
+%
+%\makeatletter
+%\if@twoside
+%  \renewcommand*{\chaptermark}[1]{%
+%    \markboth{%
+%      \ifnum\value{secnumdepth}>-1 %
+%        \thechapter\ %
+%      \fi
+%      #1%
+%    }{}%
+%  }%
+%\else
+%  \renewcommand*{\chaptermark}[1]{%
+%    \markright{%
+%      \ifnum\value{secnumdepth}>-1 %
+%        \if@mainmatter  
+%          \thechapter\ %
+%        \fi
+%      \fi
+%      #1%
+%    }%
+%  \fi
+%\makeatother
+
+% my new commandas
+
+\newcommand{\includepaper}[1]{
+\cleardoublepage
+\setlength{\voffset}{0cm}
+\setlength{\hoffset}{0cm}
+\newpage
+\includepdf[pages=-]{#1}
+\setlength{\voffset}{-1.5cm}
+\setlength{\hoffset}{-2cm}
+\clearpage	
+}
+
+\newcommand{\includeappendix}[1]{
+\clearpage
+\setlength{\voffset}{0cm}
+\setlength{\hoffset}{0cm}
+\newpage
+\includepdf[pages=-]{#1}
+\setlength{\voffset}{-1.5cm}
+\setlength{\hoffset}{-2cm}
+\clearpage	
+}

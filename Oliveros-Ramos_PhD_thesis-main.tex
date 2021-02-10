@@ -1,0 +1,153 @@
+%%%% Tesis%%%%
+\documentclass[12pt,a4paper]{book}
+
+\input{style.tex}
+
+\begin{document}
+
+\frontmatter
+\input{chapters/00-front} \thispagestyle{empty}
+
+%%%%%%%%%%%%%%%%%
+\cleardoublepage
+
+\setcounter{page}{1}    % fija en 1 el numero de pagina a partir de este punto
+
+
+\addtocontents{toc}{\textbf{Abstract}}
+
+\chapter*{Abstract} \thispagestyle{empty}%
+\addcontentsline{toc}{section}{English}
+\input{chapters/01-abstract.tex} 
+\cleardoublepage
+
+\chapter*{R\'{e}sum\'{e}} \thispagestyle{empty}%
+\addcontentsline{toc}{section}{Fran\c{c}ais}
+\input{chapters/02-resume.tex}
+\cleardoublepage
+
+\chapter*{Resumen} \thispagestyle{empty}%
+\addcontentsline{toc}{section}{Espa\~nol}
+\input{chapters/03-resumen.tex}
+\cleardoublepage
+
+%%% Dedicatoria %%%
+%\cleardoublepage
+%\thispagestyle{empty}
+%\input{chapters/04-dedicatoria} 
+%\cleardoublepage
+
+\chapter*{Acknowledgements} \thispagestyle{empty}%
+\input{chapters/05-ack.tex} 
+\cleardoublepage
+
+\tableofcontents
+\markboth{Contents}{} 
+\thispagestyle{empty}
+\cleardoublepage
+
+%\addtocontents{toc}{\bigskip}
+%\addcontentsline{toc}{section}{List of Figures}
+%\listoffigures
+%\cleardoublepage 
+%
+%
+%\addcontentsline{toc}{section}{List of Tables}
+%\listoftables 
+%\cleardoublepage
+
+
+%\chapter*{R\'{e}sum\'{e} Ex\'{e}cutif} 
+%\thispagestyle{empty}%
+%\addcontentsline{toc}{chapter}{R\'{e}sum\'{e} Ex\'{e}cutif}
+%\markboth{R\'{e}sum\'{e} Ex\'{e}cutif}{} 
+%\input{chapters/06-exec.tex}
+%\cleardoublepage
+%\thispagestyle{empty}
+
+%\addtocontents{toc}{\hspace{1cm}\newline}
+
+
+\mainmatter
+
+
+\addtocontents{toc}{\bigskip\bigskip\noindent\protect\begin{center} \textbf{\textsc{End--to--end modelling for an ecosystem approach to fisheries in the Northern Humboldt Current Ecosystem}} \protect\end{center}\par}
+
+\chapter*{Introduction} 
+\thispagestyle{empty}%
+\addcontentsline{toc}{chapter}{Introduction}
+\markboth{Introduction}{} 
+\input{chapters/intro.tex}
+\cleardoublepage
+
+\chapter{Incorporating the impact of the interannual variability of the environment}
+\label{interannual} 
+\chaptermark{Incorporating the impact of the interannual variability}
+\thispagestyle{empty}%
+\input{chapters/chap2.tex}
+\cleardoublepage
+
+\chapter{On the calibration of ecosystem models using time series data} 
+\label{EA}
+\thispagestyle{empty}%
+\input{chapters/chap1.tex}
+\cleardoublepage
+
+\chapter{Parameterization and calibration of the end-to-end ROMS-PISCES-OSMOSE model of the Northern Humboldt Current Ecosystem} 
+\label{calibration}
+\chaptermark{Calibration of the E2E model ROMS-PISCES-OSMOSE of the NHCE}
+\thispagestyle{empty}%
+
+\input{chapters/chap3.tex}
+\cleardoublepage
+
+%\chapter{Applications of ROMS-PISCES-OSMOSE model to fishery management in the Humboldt Current Ecosystem}
+%\chaptermark{Applications of the ROMS-PISCES-OSMOSE to fishery management} 
+%\thispagestyle{empty}%
+%\input{chapters/chap4.tex}
+%\cleardoublepage
+
+\chapter*{Concluding remarks and perspectives} 
+\thispagestyle{empty}%
+\addcontentsline{toc}{chapter}{Concluding remarks and perspectives}
+\markboth{General conclusions and perspectives}{} 
+\input{chapters/conclusions.tex} 
+\cleardoublepage
+
+\cleardoublepage        % asegura que el nro de página sea correcto en la ToC.
+%\phantomsection  % Para que hyperref apunte a la página correcta
+
+%\addcontentsline{toc}{chapter}{Bibliography}
+% \bibliography{references.bib} \thispagestyle{empty}%
+%  \printbibliography
+
+%      \let\normalsize\small
+%     \appendix
+%     \small
+%     
+% \appendix
+%\cleardoublepage
+%\appendix
+%\appendixpage \thispagestyle{empty}%
+%\noappendicestocpagenum
+%\addappheadtotoc
+
+%\begin{appendices}
+%
+%\chapter{Publications, manuscripts and presentations}
+%\thispagestyle{empty}%
+%\input{chapters/list_papers.tex}
+%\cleardoublepage
+%
+%\chapter{Scientific Software}
+%\thispagestyle{empty}%
+%\input{chapters/software.tex}
+%\cleardoublepage
+%
+%
+%\end{appendices}
+
+\backmatter
+
+
+\end{document}
